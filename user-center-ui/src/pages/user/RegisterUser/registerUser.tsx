@@ -1,74 +1,71 @@
 import Footer from '@/components/Footer';
-import { login } from '@/services/ant-design-pro/api';
+import {register} from '@/services/ant-design-pro/api';
 import {
   LockOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import {
   LoginForm,
-  ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
-import {message, Tabs} from 'antd';
+import { Alert, message, Tabs } from 'antd';
 import React, { useState } from 'react';
-import {FormattedMessage, history, Link, SelectLang, useIntl, useModel} from 'umi';
-import styles from './index.less';
+import {history, SelectLang, useIntl} from 'umi';
+import styles from './registerUser.less';
 
+const loginPath = '/user/login';
 
+const LoginMessage: React.FC<{
+  content: string;
+}> = ({ content }) => (
+  <Alert
+    style={{
+      marginBottom: 24,
+    }}
+    message={content}
+    type="error"
+    showIcon
+  />
+);
 
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.ResponseResult<API.UserInformation>>({
+  const [userRegisterState, setuserRegisterState] = useState<API.ResponseResult<string>>({
     code: 200,
     data: undefined,
     details: "",
     msg: ""
   });
-  const [type, setType] = useState<string>('account');
-  const { initialState, setInitialState } = useModel('@@initialState');
-
   const intl = useIntl();
-
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    if (userInfo) {
-      await setInitialState((s) => ({
-        ...s,
-        userInformation: userInfo,
-      }));
-    }
-  };
 
   const handleSubmit = async (values: API.LoginParams) => {
     try {
-      // 登录
-      const msg = await login({ ...values, type });
+      // 注册
+      const msg = await register({ ...values });
+
       if (msg.code == 200) {
         const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: '登录成功！',
+          id: 'pages.register.registerSuccess',
+          defaultMessage: '注册成功！',
         });
         message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) return;
-        const { query } = history.location;
+        /*const { query } = history.location;
         const { redirect } = query as { redirect: string };
-        history.push(redirect || '/');
+        history.push(redirect || '/');*/
+        history.push(loginPath);
         return;
       }
-      // 如果失败去设置用户错误信息
-      setUserLoginState(msg);
+      console.log(msg);
+      setuserRegisterState(msg);
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
-        id: 'pages.login.failure',
-        defaultMessage: '登录失败，请重试！',
+        defaultMessage: '注册成功，请重试！',
       });
       message.error(defaultLoginFailureMessage);
     }
   };
-
-  // @ts-ignore
-  const { code } = userLoginState;
+  const { code} = userRegisterState;
 
   return (
     <div className={styles.container}>
@@ -86,18 +83,30 @@ const Login: React.FC = () => {
           onFinish={async (values) => {
             await handleSubmit(values as API.LoginParams);
           }}
+          submitter={{
+            searchConfig: { submitText: '注册' }
+          }}
         >
-          <Tabs activeKey={type} onChange={setType}>
+          <Tabs>
             <Tabs.TabPane
               key="account"
               tab={intl.formatMessage({
-                id: 'pages.login.accountLogin.tab',
-                defaultMessage: '账户密码登录',
+                id: 'pages.register.registerAccount',
+                defaultMessage: '注册账户',
               })}
             />
           </Tabs>
 
-          {type === 'account' && (
+          {code != 200 && (
+            <LoginMessage
+              content={intl.formatMessage({
+                id: 'pages.register.registerError',
+                defaultMessage: '注册失败！',
+              })}
+            />
+          )}
+
+          {(
             <>
               <ProFormText
                 name="userCount"
@@ -113,30 +122,22 @@ const Login: React.FC = () => {
                   size: 'large',
                   prefix: <LockOutlined className={styles.prefixIcon} />,
                 }}
-                placeholder= "输入您的密码"
+                placeholder="输入您的密码"
+              />
+              <ProFormText.Password
+                name="userCheckPassword"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <LockOutlined className={styles.prefixIcon} />,
+                }}
+                placeholder="再次输入您的密码"
               />
             </>
           )}
 
-          <div
-            style={{
-              marginBottom: 24,
-              display: 'flex',
-              justifyContent: 'space-between', // 关键属性
-              alignItems: 'center', // 垂直居中对齐
-            }}
-          >
-            <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录"/>
-            </ProFormCheckbox>
-            <Link to={"/user/registerUser"}>用户注册</Link>
-            <a>
-              <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码"/>
-            </a>
-          </div>
         </LoginForm>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

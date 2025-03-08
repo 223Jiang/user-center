@@ -1,8 +1,10 @@
 package org.wei.usercenterweb.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.stereotype.Service;
 import org.wei.usercenterweb.domain.User;
+import org.wei.usercenterweb.domain.request.SearchUsersRequest;
 import org.wei.usercenterweb.domain.response.UserInformation;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,11 +38,11 @@ public interface UserService extends IService<User> {
     UserInformation userLogin(String userCount, String userPassword, HttpServletRequest request);
 
     /**
-     * 查询非管理员用户列表
+     * 查询用户列表
      *
      * @return 非管理员用户列表
      */
-    List<UserInformation> searchUsers();
+    Page<UserInformation> searchUsers(SearchUsersRequest request);
 
     /**
      * 进行用户的删除，不能删除管理员用户

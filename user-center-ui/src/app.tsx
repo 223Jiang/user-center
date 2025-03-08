@@ -3,13 +3,15 @@ import RightContent from '@/components/RightContent';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { PageLoading, SettingDrawer } from '@ant-design/pro-components';
-import type { RunTimeLayoutConfig } from 'umi';
+import type { RunTimeLayoutConfig, RequestConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import {notification} from "antd";
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+const registerPath = '/user/registerUser';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -35,11 +37,11 @@ export async function getInitialState(): Promise<{
     return undefined;
   };
   // 如果不是登录页面，执行
-  if (history.location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
+  if (history.location.pathname !== loginPath && history.location.pathname !== registerPath) {
+    const userInformation = await fetchUserInfo();
     return {
       fetchUserInfo,
-      currentUser,
+      userInformation,
       settings: defaultSettings,
     };
   }
@@ -55,13 +57,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.userInformation?.userName,
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
+      if (!initialState?.userInformation && location.pathname !== loginPath && location.pathname !== registerPath) {
         history.push(loginPath);
       }
     },
@@ -81,6 +83,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
+    // @ts-ignore
     childrenRender: (children, props) => {
       // if (initialState?.loading) return <PageLoading />;
       return (
@@ -104,4 +107,28 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     ...initialState?.settings,
   };
+};
+
+export const request: RequestConfig = {
+  responseInterceptors: [
+    async (response) => {
+      try {
+        const data = await response.clone().json();
+        if (data.code !== 200) {
+          notification.error({
+            message: data.msg || '操作失败',
+            description: data.details || '',
+          });
+          return data;
+        }
+      } catch (error) {
+        notification.error({
+          message: '响应解析失败',
+          description: '服务器返回的数据格式不正确',
+        });
+        return Promise.reject(error);
+      }
+      return response;
+    },
+  ],
 };

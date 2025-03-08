@@ -5,7 +5,7 @@ import { request } from 'umi';
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
-    data: API.CurrentUser;
+    data: API.UserInformation;
   }>('/api/user/currentUser', {
     method: 'GET',
     ...(options || {}),
@@ -14,7 +14,7 @@ export async function currentUser(options?: { [key: string]: any }) {
 
 /** 退出登录接口 POST /api/login/outLogin */
 export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/login/outLogin', {
+  return request<Record<string, any>>('/api/user/logout', {
     method: 'POST',
     ...(options || {}),
   });
@@ -22,7 +22,40 @@ export async function outLogin(options?: { [key: string]: any }) {
 
 /** 登录接口 POST /api/login/account */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.ResponseResult<API.CurrentUser>>('/api/user/login', {
+  return request<API.ResponseResult<API.UserInformation>>('/api/user/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+export async function updateUserProfile(body: API.UserInformation, options?: { [key: string]: any }) {
+  return request<API.ResponseResult<string>>('/api/user/updateUserProfile', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+export async function searchUsers(body: API.LoginParams, options?: { [key: string]: any }) {
+  return request<API.ResponseResult<API.UserInformation>>('/api/user/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+export async function register(body: API.LoginParams, options?: { [key: string]: any }) {
+  return request<API.ResponseResult<string>>('/api/user/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -1,6 +1,8 @@
 package org.wei.usercenterweb.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -8,6 +10,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.stereotype.Service;
 import org.wei.usercenterweb.common.StatusCodeEnum;
 import org.wei.usercenterweb.domain.User;
+import org.wei.usercenterweb.domain.request.SearchUsersRequest;
 import org.wei.usercenterweb.domain.response.UserInformation;
 import org.wei.usercenterweb.exception.CustomRuntimeExceptions;
 import org.wei.usercenterweb.mapper.UserMapper;
@@ -77,17 +80,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public List<UserInformation> searchUsers() {
+    public Page<UserInformation> searchUsers(SearchUsersRequest request) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(User::getIsAdmin, 0);
-        List<User> list = this.list(wrapper);
+        wrapper.like(request.getUserName() != null, User::getUserName, request.getUserName())
+                .eq(request.getIsAdmin() != null, User::getIsAdmin, request.getIsAdmin())
+                .eq(request.getUserStatus() != null, User::getUserStatus, request.getUserStatus());
+        if (request.getStartTime() != null) {
+            wrapper.ge(User::getCreateTime, request.getStartTime());
+        }
+        if (request.getEndTime() != null) {
+            wrapper.lt(User::getCreateTime, request.getEndTime());
+        }
+        IPage<User> page = this.page(new Page<>(request.getCurrent(), request.getPageSize()), wrapper);
 
         // 进行数据的脱敏操作
-        return list.stream().map(e -> {
+        List<UserInformation> records = page.getRecords().stream().map(e -> {
             UserInformation userInformation = new UserInformation();
             BeanUtils.copyProperties(e, userInformation);
             return userInformation;
         }).collect(Collectors.toList());
+
+        Page<UserInformation> objectPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        objectPage.setRecords(records);
+
+        return objectPage;
     }
 
     @Override

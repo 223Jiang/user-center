@@ -70,12 +70,12 @@ public class User implements Serializable {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private String createTime;
 
     /**
      * 修改时间
      */
-    private Date updateTime;
+    private String updateTime;
 
     /**
      * 是否为管理员（0-普通用户，1-管理员）

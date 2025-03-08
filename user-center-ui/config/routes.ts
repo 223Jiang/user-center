@@ -9,15 +9,32 @@
         component: './user/Login',
       },
       {
+        name: '注册',
+        path: '/user/registerUser',
+        component: './user/RegisterUser/registerUser.tsx',
+      },
+
+      {
         component: './404',
       },
     ],
   },
   {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
+    path: '/account',
+    name: '账户管理',
+    icon: 'UserOutlined',
+    routes: [
+      {
+        path: '/account/center',
+        name: '个人中心',
+        component: './account/Center',
+      },
+      {
+        path: '/account/settings',
+        name: '个人设置',
+        component: './account/Settings',
+      },
+    ],
   },
   {
     path: '/admin',
@@ -26,10 +43,10 @@
     access: 'canAdmin',
     routes: [
       {
-        path: '/admin/sub-page',
-        name: 'sub-page',
+        path: '/admin/listOfUsers',
+        name: '用户列表',
         icon: 'smile',
-        component: './Welcome',
+        component: './admin/ListOfUsers/listOfUsers.tsx',
       },
       {
         component: './404',
@@ -37,14 +54,8 @@
     ],
   },
   {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
-  },
-  {
     path: '/',
-    redirect: '/welcome',
+    redirect: '/account/center',
   },
   {
     component: './404',
