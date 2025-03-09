@@ -1,5 +1,5 @@
 import { useModel } from 'umi';
-import { Avatar, Descriptions, Button, Upload } from 'antd';
+import { Avatar, Descriptions } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 
@@ -15,16 +15,9 @@ const AccountCenter = () => {
           <Avatar
             size={120}
             icon={<UserOutlined />}
-            src={userInformation?.imageUrl || 'http://150.158.32.176/images/defaultAvatar.png'}
+            src={userInformation?.imageUrl || 'https://album.creativityhq.club/images/defaultAvatar.png'}
             style={{ marginBottom: 16 }}
           />
-          <Upload
-            showUploadList={false}
-            beforeUpload={() => false} // 阻止自动上传
-            onChange={() => console.log('上传头像')}
-          >
-            <Button type="primary">更换头像</Button>
-          </Upload>
         </div>
 
         {/* 基本信息 */}

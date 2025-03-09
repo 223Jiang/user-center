@@ -1,7 +1,7 @@
 import { ProForm, ProFormSelect, ProFormText } from '@ant-design/pro-components';
 import { Avatar, Button, Descriptions, message, Upload } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
-import { updateUserProfile } from '@/services/ant-design-pro/api';
+import { updateUserProfile, uploadAvatar } from '@/services/ant-design-pro/api';
 import { useModel } from 'umi';
 import moment from 'moment';
 import { useEffect } from 'react';
@@ -59,20 +59,54 @@ const AccountSettings = () => {
     }
   }, [user, form]);
 
+  // 修改Upload组件
+  const handleAvatarUpload = async (file?: any) => {
+    console.log(file);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      /*const response = await fetch('/api/user/uploadAvatar', {
+        method: 'POST',
+        body: formData,
+      });*/
+
+      const response = await uploadAvatar(formData);
+
+      // 更新用户信息
+      const updatedUser = { ...user, imageUrl: response.data };
+
+      // 更新全局状态
+      setInitialState({
+        ...initialState,
+        userInformation: updatedUser,
+      });
+
+      if (response.code == 200) {
+        message.success('头像更新成功');
+      }
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
   return (
     <PageContainer title="个人设置" ghost={false}>
       {/* 头像区域 */}
       <div style={{textAlign: 'center', marginBottom: 40}}>
         <Avatar
           size={120}
-          src={user.imageUrl || 'http://150.158.32.176/images/defaultAvatar.png'}
+          src={user.imageUrl || 'https://album.creativityhq.club/images/defaultAvatar.png'}
           alt="用户头像"
           style={{marginBottom: 16}}
         />
         <Upload
           showUploadList={false}
           beforeUpload={() => false} // 阻止自动上传
-          onChange={() => console.log('上传头像')}
+          onChange={(info) => handleAvatarUpload(info.file)}
         >
           <Button type="primary">更换头像</Button>
         </Upload>

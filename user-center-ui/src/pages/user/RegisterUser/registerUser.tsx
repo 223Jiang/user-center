@@ -74,7 +74,7 @@ const Login: React.FC = () => {
       </div>
       <div className={styles.content}>
         <LoginForm
-          logo={<img alt="logo" src="http://150.158.32.176/images/login.png" />}
+          logo={<img alt="logo" src="https://album.creativityhq.club/images/login.png" />}
           title="Smart User Platform"
           subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           initialValues={{

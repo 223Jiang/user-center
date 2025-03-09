@@ -65,6 +65,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new CustomRuntimeExceptions(StatusCodeEnum.BAD_REQUEST, "用户不存在！");
         }
 
+        if (user.getUserStatus() == 1) {
+            throw new CustomRuntimeExceptions(StatusCodeEnum.BAD_REQUEST, "账号已被封禁！");
+        }
+
         if (!verifyPassword(userPassword, user.getUserPassword())) {
             throw new CustomRuntimeExceptions(StatusCodeEnum.BAD_REQUEST, "密码错误！");
         }

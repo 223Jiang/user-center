@@ -92,7 +92,7 @@ const columns: ProColumns<API.UserInformation>[] = [
     ellipsis: true,
     render: (_, record) => (
       <img
-        src={record.imageUrl || 'http://150.158.32.176/images/defaultAvatar.png'}
+        src={record.imageUrl || 'https://album.creativityhq.club/images/defaultAvatar.png'}
         alt="avatar"
         style={{
           width: 60,
@@ -102,7 +102,7 @@ const columns: ProColumns<API.UserInformation>[] = [
         }}
         onError={(e) => {
           // @ts-ignore
-          e.target.src = 'http://150.158.32.176/images/defaultAvatar.png';
+          e.target.src = 'https://album.creativityhq.club/images/defaultAvatar.png';
         }}
       />
     ),

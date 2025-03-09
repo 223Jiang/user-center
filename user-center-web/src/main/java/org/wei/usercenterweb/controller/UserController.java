@@ -1,12 +1,20 @@
 package org.wei.usercenterweb.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.http.Method;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.wei.usercenterweb.common.ResponseResult;
 import org.wei.usercenterweb.common.StatusCodeEnum;
 import org.wei.usercenterweb.domain.User;
@@ -18,6 +26,10 @@ import org.wei.usercenterweb.service.UserService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.InputStream;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.wei.usercenterweb.contains.UserConstants.USER_INFORMATION;
 import static org.wei.usercenterweb.utile.AccountValidatorUtile.validateAccount;
@@ -35,8 +47,21 @@ import static org.wei.usercenterweb.utile.AccountValidatorUtile.validateAccountA
 @Slf4j
 @Api(tags = "用户管理")
 public class UserController {
-    @Resource
-    private UserService userService;
+
+    @Value("${minio.bucket}")
+    private String bucket;
+
+    @Value("${minio.baseUrl}")
+    private String baseUrl;
+
+    private final UserService userService;
+
+    private final MinioClient minioClient;
+
+    public UserController(UserService userService, MinioClient minioClient) {
+        this.userService = userService;
+        this.minioClient = minioClient;
+    }
 
     @ApiOperation(value = "用户注册")
     @PostMapping("/register")
@@ -109,6 +134,39 @@ public class UserController {
     @GetMapping("/currentUser")
     public ResponseResult<UserInformation> userRegister(HttpServletRequest request) {
         return ResponseResult.success(permissionVerification(request));
+    }
+
+    @ApiOperation(value = "修改头像")
+    @PostMapping("/uploadAvatar")
+    public ResponseResult<String> uploadAvatar(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        UserInformation userInformation = permissionVerification(request);
+
+        String fileName = null;
+        try (InputStream inputStream = file.getInputStream()) {
+            fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(fileName)
+                            .stream(inputStream, file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build()
+            );
+
+            String url = baseUrl + "/" + String.format("%s/objects/download?preview=true&prefix=%s",
+                    bucket, fileName);
+
+            userInformation.setImageUrl(url);
+            User user = new User();
+            BeanUtils.copyProperties(userInformation, user);
+            userService.updateById(user);
+
+            return ResponseResult.success(url);
+        } catch (Exception e) {
+            log.error("头像上传失败: {}", fileName, e);
+            return ResponseResult.fail("上传失败！");
+        }
     }
 
     @ApiOperation(value = "更新用户信息")

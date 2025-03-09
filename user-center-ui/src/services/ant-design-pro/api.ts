@@ -43,6 +43,15 @@ export async function updateUserProfile(body: API.UserInformation, options?: { [
   });
 }
 
+export async function uploadAvatar(body: FormData, options?: { [key: string]: any }) {
+  return request<API.ResponseResult<string>>('/api/user/uploadAvatar', {
+    method: 'POST',
+    data: body,
+    ...(options || {}),
+  });
+}
+
+
 export async function searchUsers(body: API.LoginParams, options?: { [key: string]: any }) {
   return request<API.ResponseResult<API.UserInformation>>('/api/user/login', {
     method: 'POST',

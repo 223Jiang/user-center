@@ -53,10 +53,6 @@ public class ResponseResult<T> implements Serializable {
         return new ResponseResult<>(StatusCodeEnum.SUCCESS);
     }
 
-    public static <T> ResponseResult<T> success(String details) {
-        return new ResponseResult<>(StatusCodeEnum.SUCCESS, null, details);
-    }
-
     public static <T> ResponseResult<T> success(T data) {
         return new ResponseResult<>(StatusCodeEnum.SUCCESS, data);
     }
