@@ -19,10 +19,10 @@
 ### 快速开始
 ```bash
 # 克隆仓库
-git clone https://github.com/yourname/your-repo.git
+git clone https://github.com/223Jiang/user-center.git
 
 # 安装依赖（如有）
-npm install / pip install -r requirements.txt
+tyarn
 
 # 运行项目
-npm start / python main.py
+npm run dev
