@@ -17,7 +17,7 @@
 # 克隆仓库
 git clone https://github.com/223Jiang/user-center.git
 
-# 安装依赖（如有）
+# 安装依赖
 tyarn
 
 # 运行项目
