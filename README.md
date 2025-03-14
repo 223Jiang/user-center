@@ -6,9 +6,19 @@
 ---
 
 ## 目录
+- 环境需求
 - 快速开始
 - 功能特性
 - 项目信息
+
+---
+
+### 环境需求
+```
+springBoot: 2.6.13
+node: 16.20.2
+java: 8.0+
+```
 
 ---
 
@@ -38,6 +48,6 @@ npm run dev
 ---
 
 ### 项目信息
-文档 : 链接
+文档 : https://github.com/223Jiang/user-center
 作者 : WeiWei
-反馈 : 提Issue
+反馈 : 提[Issue](https://github.com/223Jiang)
