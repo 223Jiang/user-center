@@ -18,6 +18,7 @@
 springBoot: 2.6.13
 node: 16.20.2
 java: 8.0+
+minio
 ```
 
 ---
