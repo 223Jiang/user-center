@@ -8,14 +8,12 @@
 ## 目录
 - 快速开始
 - 功能特性
-- 贡献指南
-- 常见问题
-- 许可证
+- 项目信息
 
 ---
 
 ### 快速开始
-```bash
+```
 # 克隆仓库
 git clone https://github.com/223Jiang/user-center.git
 
@@ -23,8 +21,8 @@ git clone https://github.com/223Jiang/user-center.git
 tyarn
 
 # 运行项目
-npm run dev```
-
+npm run dev
+```
 ---
 
 ### 功能特性
