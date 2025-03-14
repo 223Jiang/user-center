@@ -23,7 +23,7 @@ git clone https://github.com/223Jiang/user-center.git
 tyarn
 
 # 运行项目
-npm run dev
+npm run dev```
 
 ---
 
