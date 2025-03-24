@@ -79,11 +79,11 @@ public class UserController {
         }
 
         if (!validateAccount(userCount)) {
-            throw new CustomRuntimeExceptions(StatusCodeEnum.BAD_REQUEST, "账号格式不正确！");
+            throw new CustomRuntimeExceptions(StatusCodeEnum.BAD_REQUEST, "账号格式不正确！长度在 6 到 20 个字符之间，只能包含字母和数字");
         }
 
         if (!validateAccountAndPassword(userPassword)) {
-            throw new CustomRuntimeExceptions(StatusCodeEnum.BAD_REQUEST, "密码格式不正确！");
+            throw new CustomRuntimeExceptions(StatusCodeEnum.BAD_REQUEST, "密码格式不正确！长度在 8 到 20 个字符之间，必须包含至少一个大写字母、一个小写字母和一个数字");
         }
 
         boolean bool = userService.userRegister(userCount, userPassword, userCheckPassword);
