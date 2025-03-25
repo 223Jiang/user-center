@@ -44,6 +44,12 @@ npm run dev
 ![image](https://github.com/user-attachments/assets/fce4a133-6166-49ea-a96c-9ed55c8f7caa)
 
 ✅ 特性3 ：
+![image](https://github.com/user-attachments/assets/92080ae6-6c63-42a7-a88e-8bba659826f0)
+
+✅ 特性4 ：
+![image](https://github.com/user-attachments/assets/bdbd4db6-7b91-464b-9221-d7f2c4b04510)
+
+✅ 特性5 ：
 ![image](https://github.com/user-attachments/assets/ecf0b2ae-375e-4782-afb5-af1169bd3b6a)
 
 ---
