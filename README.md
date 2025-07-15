@@ -6,7 +6,6 @@
 ---
 
 **使用地址**：https://um.creativityhq.club/user/login
-**管理员**：guodon/123456wW
 **普通用户**：xiaoming/123456wW
 
 ---
